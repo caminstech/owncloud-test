@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from sys import argv
 from server import Server
+import argparse
 
 class Main:
   def __init__(self, url):
@@ -15,5 +15,11 @@ class Main:
       self.server.send(response)
       command = self.server.get()
 
-main = Main(argv[1]);
+def parseCommandLine():
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--url", required=True)
+	return parser.parse_args()
+
+args = parseCommandLine()
+main = Main(args.url);
 main.run()
