@@ -1,8 +1,6 @@
-import time
+from command import Command
 
-from . import command
-
-class Copy(command.Command): 
+class Copy(Command): 
   def run(self):
-    return 'Executing copy'
+    return 'Copy not implemented'
 

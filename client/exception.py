@@ -3,3 +3,6 @@ class HttpException(Exception):
 
 class TimeOutException(Exception):
   pass
+
+class CommandNotFoundException(Exception):
+  pass
