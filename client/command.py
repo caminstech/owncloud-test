@@ -17,7 +17,9 @@ class CommandFactory:
 
 
 class Command:
+  parameters = {}
   timeout = None
+  
   _output = Queue()
 
   def my_run(self):

@@ -8,7 +8,6 @@ class Main:
     self.server = Server(url)
 
   def run(self):
-    self.server.connect();
     command = self.server.get()
     while command is not None:
       response = command.execute()
