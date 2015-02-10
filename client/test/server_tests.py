@@ -24,9 +24,6 @@ class ServerTestCase(unittest.TestCase):
     self.server = Server('')
     self.server._requests = mock()
 
-  def tearDown(self):
-    pass
-
   def testGet(self):
     self.setResponse(self.createCommandResponse('copy', parameters = {'src': 'source', 'dst': 'destination' }, timeout = 10))
     response = self.server.get()
