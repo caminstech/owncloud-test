@@ -1,6 +1,7 @@
 from command import Command
 
-class Copy(Command): 
-  def run(self):
-    return 'Copy not implemented'
+import shutil
 
+class Copy(Command): 	
+  def run(self):
+    shutil.copyfile(self.parameters['src'], self.parameters['dst'])
