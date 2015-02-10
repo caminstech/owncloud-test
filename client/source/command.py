@@ -22,11 +22,11 @@ class Command:
   
   _output = Queue()
 
-  def my_run(self):
+  def _my_run(self):
     self._output.put(self.run())
 
   def execute(self):
-    p = Process(target=self.my_run)
+    p = Process(target=self._my_run)
     p.start()
     p.join(self.timeout)
     if p.is_alive():
