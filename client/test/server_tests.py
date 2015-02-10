@@ -8,10 +8,14 @@ from source.commands.system import *
 
 class MyTestCase(unittest.TestCase):
 
-  def createCommandResponse(self, command): 
+  def createCommandResponse(self, command, parameters = {}, timeout = None): 
     response = mock()
     response.status_code = 200
-    when(response).json().thenReturn({ 'command': command })
+    json = { 'command': command, 'parameters': parameters }
+    if timeout is not None:
+      json['timeout'] = timeout
+
+    when(response).json().thenReturn({ 'command': command, 'timeout': timeout, 'parameters': parameters })
     return response
 
   def setResponse(self, response): 
@@ -25,8 +29,11 @@ class MyTestCase(unittest.TestCase):
     pass
 
   def test_get(self):
-    self.setResponse(self.createCommandResponse('copy'))
-    self.assertIsInstance(self.server.get(), Copy)
+    self.setResponse(self.createCommandResponse('copy', parameters = {'src': 'source', 'dst': 'destination' }, timeout = 10))
+    response = self.server.get()
+    self.assertIsInstance(response, Copy)
+    self.assertEqual(response.parameters, {'src': 'source', 'dst': 'destination', })
+    self.assertIs(response.timeout, 10)
 
   def test_get_command_not_found(self):
     self.setResponse(self.createCommandResponse('Not found command'))
