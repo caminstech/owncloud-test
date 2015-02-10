@@ -10,6 +10,14 @@ class Server:
   _factory = None
   _requests = None
 
+  def _parse(self, json):
+    values = {}
+    values['uid'] = json['uid']
+    values['command'] = json['command']
+    values['timeout'] = json['timeout'] if 'timeout' in json else None
+    values['parameters'] = json['parameters'] if 'parameters' in json else {}
+    return values
+
   def __init__(self, url = ''):
     self._url = url
     self._factory = CommandFactory()
@@ -20,11 +28,13 @@ class Server:
     if response.status_code != requests.codes.ok: 
       raise HttpException(response.status_code)
 
-    json = response.json();
-    command = self._factory.create(json['command'])
-    command.parameters = json['parameters'] if 'parameters' in json else None
-    command.timeout = json['timeout'] if 'timeout' in json else None
+    values = self._parse(response.json())
+    command = self._factory.create(values['command'])
+    command.uid = values['uid']
+    command.timeout = values['timeout']
+    command.parameters = values['parameters']
     return command
   
   def send(self, response):
-     print(response)
+    self._requests
+    print(response)

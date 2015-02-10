@@ -7,14 +7,14 @@ from source.commands.system import *
 
 class ServerTest(unittest.TestCase):
 
-  def createCommandResponse(self, command, parameters = {}, timeout = None): 
+  def createCommandResponse(self, uid, command, parameters = {}, timeout = None): 
     response = mock()
     response.status_code = 200
     json = { 'command': command, 'parameters': parameters }
     if timeout is not None:
       json['timeout'] = timeout
 
-    when(response).json().thenReturn({ 'command': command, 'timeout': timeout, 'parameters': parameters })
+    when(response).json().thenReturn({ 'uid': uid, 'command': command, 'timeout': timeout, 'parameters': parameters })
     return response
 
   def setResponse(self, response): 
@@ -25,12 +25,13 @@ class ServerTest(unittest.TestCase):
     self.server._requests = mock()
 
   def testGet(self):
-    self.setResponse(self.createCommandResponse('copy', parameters = {'src': 'source', 'dst': 'destination' }, timeout = 10))
+    self.setResponse(self.createCommandResponse(uid = 'a00001', command = 'copy', parameters = {'src': 'source', 'dst': 'destination' }, timeout = 10))
     response = self.server.get()
     self.assertIsInstance(response, Copy)
+    self.assertEqual(response.uid, 'a00001')
     self.assertEqual(response.parameters, {'src': 'source', 'dst': 'destination', })
     self.assertIs(response.timeout, 10)
 
   def testGetCommandNotFound(self):
-    self.setResponse(self.createCommandResponse('Not found command'))
+    self.setResponse(self.createCommandResponse(uid = 'a00002', command = 'Not found command'))
     self.assertRaises(CommandNotFoundException, self.server.get)

@@ -15,7 +15,6 @@ class CommandFactory:
       raise CommandNotFoundException(commandId)
     return self.commands[commandId]
 
-
 class Command:
   parameters = {}
   timeout = None
