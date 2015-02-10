@@ -16,9 +16,9 @@ class CommandFactory:
     return self.commands[commandId]
 
 class Command:
+  uid = None
   parameters = {}
   timeout = None
-  
   _output = Queue()
 
   def _my_run(self):

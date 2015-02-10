@@ -36,5 +36,4 @@ class Server:
     return command
   
   def send(self, response):
-    self._requests
-    print(response)
+    self._requests.post(self._url + '/' + response['uid'] , json.dumps(response))
