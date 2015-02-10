@@ -1,6 +1,6 @@
-from command import Command
-
 import shutil
+
+from ..command import Command
 
 class Copy(Command): 	
   def run(self):

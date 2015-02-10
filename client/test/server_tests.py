@@ -5,7 +5,7 @@ from source.server import *
 from source.exception import *
 from source.commands.system import *
 
-class ServerTestCase(unittest.TestCase):
+class ServerTest(unittest.TestCase):
 
   def createCommandResponse(self, command, parameters = {}, timeout = None): 
     response = mock()

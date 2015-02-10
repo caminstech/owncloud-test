@@ -7,7 +7,7 @@ import os
 
 from source.commands.system import *
 
-class CopyTestCase(unittest.TestCase):
+class SystemTest(unittest.TestCase):
   def _createFileWithContent(self, filename, content):
     with open(filename, 'w') as f:
       f.write(content)
