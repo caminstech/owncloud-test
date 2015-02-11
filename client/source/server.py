@@ -2,11 +2,19 @@ import json
 import urllib3
 import requests
 
+from enum import Enum
+
 from command import CommandFactory 
 from exception import HttpException
 
 class Server:
+  class Status(Enum):
+    ok = 'OK'
+    error = 'ERROR'
+    timeout = 'TIMEOUT'
+
   _url = None
+
   _factory = None
   _requests = None
 
