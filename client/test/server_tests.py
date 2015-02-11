@@ -9,7 +9,7 @@ from source.commands.system import *
 
 class ServerTest(unittest.TestCase):
 
-  def createCommandResponse(self, uid, command, parameters = {}, timeout = None): 
+  def _createCommandResponse(self, uid, command, parameters = {}, timeout = None): 
     response = mock()
     response.status_code = 200
     json = { 'uid': uid, 'command': command, 'parameters': parameters }
@@ -26,21 +26,30 @@ class ServerTest(unittest.TestCase):
     self.server = Server('')
     self.server._requests = mock()
 
-  def testGet(self):
-    self.setResponse(self.createCommandResponse(uid = 'a00001', command = 'copy', parameters = {'src': 'source', 'dst': 'destination' }, timeout = 10))
+  def testGetCommmandCopy(self):
+    uid = 'XXXXXX'
+    command = 'copy'
+    parameters = {'src': 'source', 'dst': 'destination' }
+    timeout = 10
+    self.setResponse(self._createCommandResponse(uid, command, parameters, timeout))
+
     response = self.server.get()
+    
     self.assertIsInstance(response, Copy)
-    self.assertEqual(response.uid, 'a00001')
-    self.assertEqual(response.parameters, {'src': 'source', 'dst': 'destination', })
-    self.assertIs(response.timeout, 10)
+    self.assertEqual(response.uid, uid)
+    self.assertEqual(response.parameters, parameters)
+    self.assertIs(response.timeout, timeout)
 
   def testGetCommandNotFound(self):
-    self.setResponse(self.createCommandResponse(uid = 'a00002', command = 'Not found command'))
+    uid = 'XXXXXX'
+    command = 'Not found command'
+
+    self.setResponse(self._createCommandResponse(uid, command))
     self.assertRaises(CommandNotFoundException, self.server.get)
 
-  def testSend(self):
+  def testSendResponseAsJson(self):
     response = {}
-    response['uid'] = 'a00001'
-    response['status'] = 'OK'
+    response['uid'] = 'XXXXXX'
+    response['status'] = Server.Status.ok
     self.server.send(response)
     verify(self.server._requests).post('/' + response['uid'], json.dumps(response))
