@@ -2,36 +2,38 @@ from mockito import *
 import unittest
 import json
 
-from source.server import *
-from source.exception import *
-from source.command import * 
-from source.commands.system import *
+from octest.server import *
+from octest.exception import *
+from octest.command import * 
+from octest.commands.system import *
+from octest.response import *
 
 class ServerTest(unittest.TestCase):
 
-  def _createCommandResponse(self, uid, command, parameters = {}, timeout = None): 
+  def mockResponse(self, uid, command, parameters = {}, timeout = None): 
     response = mock()
     response.status_code = 200
     json = { 'uid': uid, 'command': command, 'parameters': parameters }
     if timeout is not None:
       json['timeout'] = timeout
-
     when(response).json().thenReturn(json)
     return response
 
   def setResponse(self, response): 
-  	when(self.server._requests).get('').thenReturn(response)    
+  	when(self.server._requests).get('http://www.test.com/clientUID').thenReturn(response)    
 
   def setUp(self):
-    self.server = Server('')
+    self.server = Server(baseUrl='http://www.test.com')
     self.server._requests = mock()
+    self.server._client = mock()
+    when(self.server._client).getUid().thenReturn('clientUID')
 
   def testGetCommmandCopy(self):
-    uid = 'XXXXXX'
+    uid = 'CommandUID'
     command = 'copy'
     parameters = {'src': 'source', 'dst': 'destination' }
     timeout = 10
-    self.setResponse(self._createCommandResponse(uid, command, parameters, timeout))
+    self.setResponse(self.mockResponse(uid, command, parameters, timeout))
 
     response = self.server.get()
     
@@ -41,15 +43,16 @@ class ServerTest(unittest.TestCase):
     self.assertIs(response.timeout, timeout)
 
   def testGetCommandNotFound(self):
-    uid = 'XXXXXX'
+    uid = 'CommandUID'
     command = 'Not found command'
 
-    self.setResponse(self._createCommandResponse(uid, command))
+    self.setResponse(self.mockResponse(uid, command))
     self.assertRaises(CommandNotFoundException, self.server.get)
 
   def testSendResponseAsJson(self):
-    response = {}
-    response['uid'] = 'XXXXXX'
-    response['status'] = Server.Status.ok
+    response = Response()
+    response.uid = 'commandUID'
+    response.status = Response.Status.ok
+    response.message = ''
     self.server.send(response)
-    verify(self.server._requests).post('/' + response['uid'], json.dumps(response))
+    verify(self.server._requests).post('http://www.test.com/clientUID/commandUID', response.json())

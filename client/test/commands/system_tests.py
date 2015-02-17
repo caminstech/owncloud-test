@@ -5,14 +5,14 @@ import shutil
 import tempfile
 import os
 
-from source.commands.system import *
+from octest.commands.system import *
 
 class SystemTest(unittest.TestCase):
-  def _createFileWithContent(self, filename, content):
+  def _createFile(self, filename, content = ''):
     with open(filename, 'w') as f:
       f.write(content)
 
-  def _readFileContent(self, filename):
+  def _readFile(self, filename):
     with open(filename, 'r') as f:
       content = f.read()
     return content
@@ -22,19 +22,35 @@ class SystemTest(unittest.TestCase):
 
   def setUp(self):
     self.folder = tempfile.mkdtemp()
+    self.copy = Copy()
 
   def tearDown(self):
     shutil.rmtree(self.folder)
 
-  def testExecuteCopy(self):
+  def testCopy(self):
     srcContent = 'uhu80y342ubfvnbopufh34y03nvlkfhe0o3';
     srcFilename = self._getTempFile('src')
     dstFilename = self._getTempFile('dst')
-    self._createFileWithContent(srcFilename, srcContent)
+    self._createFile(srcFilename, srcContent)
 
-    copy = Copy()
-    copy.parameters = { 'src': srcFilename, 'dst': dstFilename }
-    copy.run()
+    self.copy.parameters = { 'src': srcFilename, 'dst': dstFilename }
+    self.copy.run()
 
     self.assertTrue(os.path.isfile(dstFilename), "Destination file doesn't exists")
-    self.assertEquals(srcContent, self._readFileContent(dstFilename), "File content isn't equal")
+    self.assertEquals(srcContent, self._readFile(dstFilename), "File content isn't equal")
+
+  def testCopyNotExists(self):
+    srcFilename = self._getTempFile('src')
+    dstFilename = self._getTempFile('dst')
+
+    self.copy = Copy()
+    self.copy.parameters = { 'src': srcFilename, 'dst': dstFilename }
+    self.assertRaises(CommandExecutionException, self.copy.run)
+
+  def testCopySameFile(self):
+    filename = self._getTempFile('src-dst')
+    self._createFile(filename)
+
+    self.copy = Copy()
+    self.copy.parameters = { 'src': filename, 'dst': filename }
+    self.assertRaises(CommandExecutionException, self.copy.run)    
