@@ -22,7 +22,6 @@ class SystemTest(unittest.TestCase):
 
   def setUp(self):
     self.folder = tempfile.mkdtemp()
-    self.copy = Copy()
 
   def tearDown(self):
     shutil.rmtree(self.folder)
@@ -33,8 +32,9 @@ class SystemTest(unittest.TestCase):
     dstFilename = self._getTempFile('dst')
     self._createFile(srcFilename, srcContent)
 
-    self.copy.parameters = { 'src': srcFilename, 'dst': dstFilename }
-    self.copy.run()
+    copy = Copy()
+    copy.parameters = { 'src': srcFilename, 'dst': dstFilename }
+    copy.run()
 
     self.assertTrue(os.path.isfile(dstFilename), "Destination file doesn't exists")
     self.assertEquals(srcContent, self._readFile(dstFilename), "File content isn't equal")
@@ -43,14 +43,22 @@ class SystemTest(unittest.TestCase):
     srcFilename = self._getTempFile('src')
     dstFilename = self._getTempFile('dst')
 
-    self.copy = Copy()
-    self.copy.parameters = { 'src': srcFilename, 'dst': dstFilename }
-    self.assertRaises(CommandExecutionException, self.copy.run)
+    copy = Copy()
+    copy.parameters = { 'src': srcFilename, 'dst': dstFilename }
+    self.assertRaises(CommandExecutionException, copy.run)
 
   def testCopySameFile(self):
     filename = self._getTempFile('src-dst')
     self._createFile(filename)
 
-    self.copy = Copy()
-    self.copy.parameters = { 'src': filename, 'dst': filename }
-    self.assertRaises(CommandExecutionException, self.copy.run)    
+    copy = Copy()
+    copy.parameters = { 'src': filename, 'dst': filename }
+    self.assertRaises(CommandExecutionException, copy.run)  
+
+  def testWaitUntilFileSize(self):
+    filename = self._getTempFile('wait')
+    self._createFile(filename, '1234567')
+
+    wait = WaitUntilFileSize()
+    wait.parameters = { 'path': filename, 'size': 7 }
+    wait.run()
