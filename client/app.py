@@ -6,14 +6,17 @@ from server import *
 from commandRunner import *
 
 class App:
+  server = None
+  runner = None
+
   def __init__(self, baseurl, clientid):
     self.server = Server(baseurl, clientid)
-
-  def run(self):
-    runner = CommandRunner()
+    self.runner = CommandRunner()
+  
+  def run(self):  
     command = self.server.get()
     while command is not None:
-      response = runner.run(command)
+      response = self.runner.run(command)
       self.server.send(response)
       command = self.server.get()
 
