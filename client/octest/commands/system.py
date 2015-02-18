@@ -26,3 +26,7 @@ class WaitUntilFileSize:
   def run(self):
     while(not self.found()):
       time.sleep(self.sleep)
+
+class Wait:
+  def run(self):
+    time.sleep(self.parameters['wait'])
