@@ -17,6 +17,10 @@ class Copy:
     except IOError as e:
       raise CommandExecutionException(e)
 
+  def __str__(self):
+    return "Copy(src=%s,dst=%s)" % (self.src, self.dst)
+
+
 class WaitUntilFileSize:
   path = None
   size = None  
@@ -37,6 +41,9 @@ class WaitUntilFileSize:
     while(not self.found()):
       time.sleep(self.wait)
 
+  def __str__(self):
+    return "WaitUntilFileSize(path=%s,size=%s)" % (self.path, self.size)
+
 class Wait:
   wait = None
 
@@ -45,3 +52,6 @@ class Wait:
 
   def run(self):
     time.sleep(self.wait)
+
+  def __str__(self):
+    return "Wait(wait=%s)" % (self.wait)
