@@ -1,8 +1,8 @@
 import time
 from multiprocessing import Process, Queue
 
-from octest.response import Response
-from octest.exception import *
+from response import Response
+from exception import *
 
 class CommandRunner:
 

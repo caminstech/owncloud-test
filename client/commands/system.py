@@ -2,7 +2,7 @@ import shutil
 import os.path
 import time
 
-from octest.exception import CommandExecutionException
+from exception import CommandExecutionException
 
 class Copy:
   src = None
@@ -16,6 +16,10 @@ class Copy:
       shutil.copyfile(self.src, self.dst)
     except IOError as e:
       raise CommandExecutionException(e)
+
+  def __str__(self):
+    return "Copy(src=%s,dst=%s)" % (self.src, self.dst)
+
 
 class WaitUntilFileSize:
   path = None
@@ -37,6 +41,9 @@ class WaitUntilFileSize:
     while(not self.found()):
       time.sleep(self.wait)
 
+  def __str__(self):
+    return "WaitUntilFileSize(path=%s,size=%s)" % (self.path, self.size)
+
 class Wait:
   wait = None
 
@@ -45,3 +52,6 @@ class Wait:
 
   def run(self):
     time.sleep(self.wait)
+
+  def __str__(self):
+    return "Wait(wait=%s)" % (self.wait)

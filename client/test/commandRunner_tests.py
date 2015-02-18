@@ -2,9 +2,9 @@ from mockito import *
 import unittest
 import time
 
-from octest.command import *
-from octest.commandRunner import *
-from octest.exception import *
+from command import *
+from commandRunner import *
+from exception import *
   
 class CommandRunnerTest(unittest.TestCase):
   def setUp(self):
