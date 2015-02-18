@@ -35,9 +35,10 @@ class ServerTest(unittest.TestCase):
 
     response = self.server.get()
     
-    self.assertIsInstance(response, Copy)
+    self.assertIsInstance(response.runnable, Copy)
+    self.assertEqual(response.runnable.src, parameters['src'])
+    self.assertEqual(response.runnable.dst, parameters['dst'])
     self.assertEqual(response.uid, uid)
-    self.assertEqual(response.parameters, parameters)
     self.assertIs(response.timeout, timeout)
 
   def testGetCommandNotFound(self):

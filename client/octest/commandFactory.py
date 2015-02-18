@@ -13,7 +13,9 @@ class CommandFactory:
       self.ID_WAIT_FILE: system.WaitUntilFileSize(),
     }
   
-  def create(self, commandId):
-    if commandId not in self.commands:
-      raise CommandNotFoundException(commandId)
-    return self.commands[commandId]
+  def create(self, id, parameters = {}):
+    if id not in self.commands:
+      raise CommandNotFoundException(id)
+    command = self.commands[id]
+    command.set(parameters);
+    return command

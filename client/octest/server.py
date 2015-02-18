@@ -2,6 +2,7 @@ import urllib3
 import requests
 from urllib.parse import urljoin
 
+from octest.command import *
 from octest.commandFactory import *
 from octest.exception import *
 
@@ -17,10 +18,10 @@ class Server:
     return urljoin(self.baseUrl + '/', self.clientId)
 
   def _createCommand(self, json):
-    command = self._factory.create(json['command'])
+    command = Command()
     command.uid = json['uid']
     command.timeout = json['timeout'] if 'timeout' in json else None
-    command.parameters = json['parameters'] if 'parameters' in json else {}
+    command.runnable = self._factory.create(json['command'], json['parameters'] if 'parameters' in json else {})
     return command
 
   def __init__(self, baseUrl, clientId):

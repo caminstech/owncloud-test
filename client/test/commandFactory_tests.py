@@ -20,4 +20,4 @@ class CommandFactoryTest(unittest.TestCase):
     self.assertIsInstance(self.factory.create(CommandFactory.ID_WAIT_FILE), WaitUntilFileSize)
 
   def testCreateNotFound(self):    
-    self.assertRaises(CommandNotFoundException, self.factory.create, (''))
+    self.assertRaises(CommandNotFoundException, self.factory.create, ('Not exists'))

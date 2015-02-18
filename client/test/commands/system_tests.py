@@ -33,7 +33,7 @@ class SystemTest(unittest.TestCase):
     self._createFile(srcFilename, srcContent)
 
     copy = Copy()
-    copy.parameters = { 'src': srcFilename, 'dst': dstFilename }
+    copy.set({ 'src': srcFilename, 'dst': dstFilename })
     copy.run()
 
     self.assertTrue(os.path.isfile(dstFilename), "Destination file doesn't exists")
@@ -44,7 +44,7 @@ class SystemTest(unittest.TestCase):
     dstFilename = self._getTempFile('dst')
 
     copy = Copy()
-    copy.parameters = { 'src': srcFilename, 'dst': dstFilename }
+    copy.set({ 'src': srcFilename, 'dst': dstFilename })
     self.assertRaises(CommandExecutionException, copy.run)
 
   def testCopySameFile(self):
@@ -52,7 +52,7 @@ class SystemTest(unittest.TestCase):
     self._createFile(filename)
 
     copy = Copy()
-    copy.parameters = { 'src': filename, 'dst': filename }
+    copy.set({ 'src': filename, 'dst': filename })
     self.assertRaises(CommandExecutionException, copy.run)  
 
   def testWaitUntilFileSize(self):
@@ -60,5 +60,5 @@ class SystemTest(unittest.TestCase):
     self._createFile(filename, '1234567')
 
     wait = WaitUntilFileSize()
-    wait.parameters = { 'path': filename, 'size': 7 }
+    wait.set({ 'path': filename, 'size': 7 })
     wait.run()
