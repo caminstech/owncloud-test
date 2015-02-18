@@ -23,10 +23,8 @@ class ServerTest(unittest.TestCase):
   	when(self.server._requests).get('http://www.test.com/clientUID').thenReturn(response)    
 
   def setUp(self):
-    self.server = Server(baseUrl='http://www.test.com')
+    self.server = Server(baseUrl='http://www.test.com', clientId='clientUID')
     self.server._requests = mock()
-    self.server._client = mock()
-    when(self.server._client).getUid().thenReturn('clientUID')
 
   def testGetCommmandCopy(self):
     uid = 'CommandUID'

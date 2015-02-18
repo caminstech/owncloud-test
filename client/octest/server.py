@@ -2,20 +2,19 @@ import urllib3
 import requests
 from urllib.parse import urljoin
 
-from octest.client import *
 from octest.commandFactory import *
 from octest.exception import *
 
 class Server:
 
   baseUrl = None
+  clientId = None
 
-  _client = None
   _factory = None
   _requests = None
 
   def _getClientUrl(self):
-    return urljoin(self.baseUrl + '/', self._client.getUid())
+    return urljoin(self.baseUrl + '/', self.clientId)
 
   def _createCommand(self, json):
     command = self._factory.create(json['command'])
@@ -24,9 +23,9 @@ class Server:
     command.parameters = json['parameters'] if 'parameters' in json else {}
     return command
 
-  def __init__(self, baseUrl = ''):
+  def __init__(self, baseUrl, clientId):
     self.baseUrl = baseUrl
-    self._client = Client()
+    self.clientId = clientId
     self._factory = CommandFactory()
     self._requests = requests
 

@@ -5,7 +5,7 @@ import argparse
 
 class Main:
   def __init__(self, baseurl):
-    self.server = Server(baseurl)
+    self.server = Server(baseurl, clientid)
 
   def run(self):
     runner = CommandRunner()
@@ -17,9 +17,10 @@ class Main:
 
 def parseCommandLine():
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--baseurl", required=True)
+  parser.add_argument("--baseurl", required=True)
+  parser.add_argument("--clientid", required=True)
 	return parser.parse_args()
 
 args = parseCommandLine()
-main = Main(args.baseurl);
+main = Main(args.baseurl, args.clientid);
 main.run()
