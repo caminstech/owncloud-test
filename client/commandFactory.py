@@ -1,5 +1,5 @@
-from octest.exception import CommandNotFoundException
-from octest.commands import system
+from exception import CommandNotFoundException
+from commands import system
 
 class CommandFactory:
   ID_COPY = 'copy'

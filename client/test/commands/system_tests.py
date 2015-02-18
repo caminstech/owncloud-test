@@ -5,7 +5,7 @@ import shutil
 import tempfile
 import os
 
-from octest.commands.system import *
+from commands.system import *
 
 class SystemTest(unittest.TestCase):
   def _createFile(self, filename, content = ''):

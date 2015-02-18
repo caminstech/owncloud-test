@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-from server import Server
 import argparse
 
-class Main:
-  def __init__(self, baseurl):
+from server import *
+from commandRunner import *
+
+class App:
+  def __init__(self, baseurl, clientid):
     self.server = Server(baseurl, clientid)
 
   def run(self):
@@ -16,11 +18,12 @@ class Main:
       command = self.server.get()
 
 def parseCommandLine():
-	parser = argparse.ArgumentParser()
+  parser = argparse.ArgumentParser()
   parser.add_argument("--baseurl", required=True)
   parser.add_argument("--clientid", required=True)
-	return parser.parse_args()
+  return parser.parse_args()
 
-args = parseCommandLine()
-main = Main(args.baseurl, args.clientid);
-main.run()
+if __name__ == '__main__':
+  args = parseCommandLine()
+  app = App(args.baseurl, args.clientid);
+  app.run()

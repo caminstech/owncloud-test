@@ -2,7 +2,7 @@ import shutil
 import os.path
 import time
 
-from octest.exception import CommandExecutionException
+from exception import CommandExecutionException
 
 class Copy:
   src = None

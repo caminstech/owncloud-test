@@ -2,9 +2,9 @@ import urllib3
 import requests
 from urllib.parse import urljoin
 
-from octest.command import *
-from octest.commandFactory import *
-from octest.exception import *
+from command import *
+from commandFactory import *
+from exception import *
 
 class Server:
 
@@ -15,7 +15,7 @@ class Server:
   _requests = None
 
   def _getClientUrl(self):
-    return urljoin(self.baseUrl + '/', self.clientId)
+    return urljoin(self.baseUrl + '/client/', self.clientId)
 
   def _createCommand(self, json):
     command = Command()

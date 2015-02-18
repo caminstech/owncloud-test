@@ -2,9 +2,9 @@ from mockito import *
 import unittest
 import time
 
-from octest.commandFactory import *
-from octest.commands.system import *
-from octest.exception import *
+from commandFactory import *
+from commands.system import *
+from exception import *
   
 class CommandFactoryTest(unittest.TestCase):
   def setUp(self):

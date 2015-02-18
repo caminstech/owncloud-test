@@ -2,11 +2,11 @@ from mockito import *
 import unittest
 import json
 
-from octest.server import *
-from octest.exception import *
-from octest.command import * 
-from octest.commands.system import *
-from octest.response import *
+from server import *
+from exception import *
+from command import * 
+from commands.system import *
+from response import *
 
 class ServerTest(unittest.TestCase):
 
@@ -20,7 +20,7 @@ class ServerTest(unittest.TestCase):
     return response
 
   def setResponse(self, response): 
-  	when(self.server._requests).get('http://www.test.com/clientUID').thenReturn(response)    
+  	when(self.server._requests).get('http://www.test.com/client/clientUID').thenReturn(response)    
 
   def setUp(self):
     self.server = Server(baseUrl='http://www.test.com', clientId='clientUID')
@@ -54,4 +54,4 @@ class ServerTest(unittest.TestCase):
     response.status = Response.Status.ok
     response.message = ''
     self.server.send(response)
-    verify(self.server._requests).post('http://www.test.com/clientUID/commandUID', response.json())
+    verify(self.server._requests).post('http://www.test.com/client/clientUID/commandUID', response.json())
