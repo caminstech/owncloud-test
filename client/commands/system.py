@@ -4,7 +4,7 @@ import time
 
 from exception import CommandExecutionException
 
-class Copy:
+class CopyFile:
   src = None
   dst = None 	
   def set(self, parameters):

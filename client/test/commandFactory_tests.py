@@ -10,14 +10,14 @@ class CommandFactoryTest(unittest.TestCase):
   def setUp(self):
     self.factory = CommandFactory()
 
-  def testCreateCopy(self):    
-    self.assertIsInstance(self.factory.create(CommandFactory.ID_COPY), Copy)
-
   def testCreateWait(self):    
-    self.assertIsInstance(self.factory.create(CommandFactory.ID_WAIT), Wait)
+    self.assertIsInstance(self.factory.create(CommandFactory.ID_WAIT, {'wait': 1}), Wait)
+
+  def testCreateCopyFile(self):    
+    self.assertIsInstance(self.factory.create(CommandFactory.ID_COPY_FILE, {'src': 'path1', 'dst': 'path2'}), CopyFile)
 
   def testCreateWaitFile(self):    
-    self.assertIsInstance(self.factory.create(CommandFactory.ID_WAIT_FILE), WaitUntilFileSize)
+    self.assertIsInstance(self.factory.create(CommandFactory.ID_WAIT_FILE, {'path': 'path1'}), WaitUntilFileSize)
 
   def testCreateNotFound(self):    
     self.assertRaises(CommandNotFoundException, self.factory.create, ('Not exists'))

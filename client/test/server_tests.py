@@ -20,7 +20,7 @@ class ServerTest(unittest.TestCase):
     return response
 
   def setResponse(self, response): 
-  	when(self.server._requests).get('http://www.test.com/client/clientUID').thenReturn(response)    
+  	when(self.server._requests).get('http://www.test.com/client/clientUID/command').thenReturn(response)    
 
   def setUp(self):
     self.server = Server(baseUrl='http://www.test.com', clientId='clientUID')
@@ -28,14 +28,14 @@ class ServerTest(unittest.TestCase):
 
   def testGetCommmandCopy(self):
     uid = 'CommandUID'
-    command = 'copy'
-    parameters = {'src': 'source', 'dst': 'destination' }
+    command = 'copy-file'
+    parameters = {'src': 'source', 'dst': 'destination'}
     timeout = 10
     self.setResponse(self.mockResponse(uid, command, parameters, timeout))
 
     response = self.server.get()
     
-    self.assertIsInstance(response.runnable, Copy)
+    self.assertIsInstance(response.runnable, CopyFile)
     self.assertEqual(response.runnable.src, parameters['src'])
     self.assertEqual(response.runnable.dst, parameters['dst'])
     self.assertEqual(response.uid, uid)
@@ -54,4 +54,4 @@ class ServerTest(unittest.TestCase):
     response.status = Response.Status.ok
     response.message = ''
     self.server.send(response)
-    verify(self.server._requests).post('http://www.test.com/client/clientUID/commandUID', response.json())
+    verify(self.server._requests).post('http://www.test.com/client/clientUID/command/commandUID', response.json())
