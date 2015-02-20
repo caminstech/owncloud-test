@@ -11,6 +11,12 @@ class Copy:
     self.src = parameters.get('src')
     self.dst = parameters.get('dst')
 
+    if self.src is None:
+      raise CommandParameterNotFoundException('src')
+
+    if self.dst is None:
+      raise CommandParameterNotFoundException('dst')
+
   def run(self):
     try:
       shutil.copyfile(self.src, self.dst)
@@ -37,6 +43,9 @@ class WaitUntilFileSize:
     self.path = parameters.get('path')
     self.size = parameters.get('size')
 
+    if self.path is None:
+      raise CommandParameterNotFoundException('path')
+
   def run(self):
     while(not self.found()):
       time.sleep(self.wait)
@@ -49,6 +58,9 @@ class Wait:
 
   def set(self, parameters):
     self.wait = parameters.get('wait')
+
+    if self.wait is None:
+      raise CommandParameterNotFoundException('wait')
 
   def run(self):
     time.sleep(self.wait)

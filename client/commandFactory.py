@@ -16,6 +16,7 @@ class CommandFactory:
   def create(self, id, parameters = {}):
     if id not in self.commands:
       raise CommandNotFoundException(id)
-    command = self.commands[id]
+    command = self.commands.get(id)
+    
     command.set(parameters);
     return command

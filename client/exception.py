@@ -10,5 +10,8 @@ class CommandExecutionException(Exception):
 class CommandNotFoundException(Exception):
   pass
 
+class CommandParameterNotFoundException(Exception):
+  pass
+
 class CommandWithoutResultException(Exception):
   pass
