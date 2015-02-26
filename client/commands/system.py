@@ -54,16 +54,16 @@ class WaitUntilFileSize:
     return "WaitUntilFileSize(path=%s,size=%s)" % (self.path, self.size)
 
 class Wait:
-  wait = None
+  seconds = None
 
   def set(self, parameters):
-    self.wait = parameters.get('wait')
+    self.seconds = parameters.get('seconds')
 
-    if self.wait is None:
-      raise CommandParameterNotFoundException('wait')
+    if self.seconds is None:
+      raise CommandParameterNotFoundException('seconds')
 
   def run(self):
-    time.sleep(self.wait)
+    time.sleep(self.seconds)
 
   def __str__(self):
-    return "Wait(wait=%s)" % (self.wait)
+    return "Wait(seconds=%s)" % (self.seconds)

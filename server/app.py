@@ -6,56 +6,167 @@ import time
 
 from flask import Flask
 
-def commandWaitFile(path):
-  return {
-    'uid': str(uuid.uuid4()),
-    'command': 'wait-file',
-    'parameters': {
-      'path': path
+class Command:
+  uid = None
+  name = None
+  parameters = None
+  startTime = None
+  endTime = None
+  client = None
+  
+  def json(self):
+    values = {
+      'uid': self.uid,
+      'command': self.name,
+      'parameters': self.parameters,
+      'startTime': self.startTime,
+      'endTime': self.endTime
     }
-  }
+    return json.dumps(values)
+  
+  @staticmethod
+  def createWait(seconds):
+    c = Command()
+    c.uid = str(uuid.uuid4())
+    c.name = 'wait'
+    c.parameters = { 'seconds': seconds }
+    return c
 
-def commandCopyFile(src, dst):
-  return {
-    'uid': str(uuid.uuid4()),
-    'command': 'copy-file',
-    'parameters': {
-      'src': src,
-      'dst': dst
-    }
-  }
+  @staticmethod
+  def createWaitFile(path):
+    c = Command()
+    c.uid = str(uuid.uuid4())
+    c.name = 'wait-file'
+    c.parameters = { 'path': path }
+    return c
 
-executed = {
-}
+  @staticmethod
+  def createCopyFile(src, dst):
+    c = Command()
+    c.uid = str(uuid.uuid4())
+    c.name = 'copy-file'
+    c.parameters = { 'src': src, 'dst': dst }
+    return c
+   
+class CommandDAO:
+  commands = {}
+  def add(self, command):
+    self.commands.append(command)
+    print("-- ADD -----------------------------------------")
+    for c in self.commands:
+      print(c.json())
+    print("------------------------------------------------")
+  def update(self, command):
+    self.commands.append(command)
+    print("-- UPDATE --------------------------------------")
+    for c in self.commands:
+      print(c.json())
+    print("------------------------------------------------")
+  def save(self, command):
+    self.commands[command.uid] = command
+    print("-- SAVE ----------------------------------------")
+    for c in self.commands:
+      print(c.json())
+    print("------------------------------------------------")
 
-pending = {
-  'client-upload': [],
-  'client-download1': [],
-  'client-download2': [],
-}
+class Client:
+  uid = None
+  commands = None
+  
+  def __init__(self, uid):
+    self.uid = uid
+    self.commands = [] 
+      
+  def add(self, command):
+    self.commands.append(command)
+    
+  def get(self):
+    if len(self.commands) == 0:
+      return None
+    return self.commands.pop(0)
 
-pending['client-upload'].append(commandCopyFile('file-0.dat', 'file.dat'));
-pending['client-download1'].append(commandWaitFile('file.dat'));
-pending['client-download2'].append(commandWaitFile('file.dat'));
+class ClientTester:
+  server = None
+  clients = None
+  clientsWaiting = None
+  commands = None
+  commandDAO = None
+  
+  def mustWait(self, client):
+    self.clientsWaiting[client.uid] = client    
+    if len(self.clients) == len(self.clientsWaiting):
+      return 0      
+    return 1
+  
+  def __init__(self):
+    self.clients = {}
+    self.clientsWaiting = {}
+    self.commands = {}
+    self.commandDAO = CommandDAO()    
+    self.server = Flask(__name__)
+    
+    @self.server.route('/client/<clientId>/command', methods=['GET'])
+    def getCommand(clientId):
+      client = self.clients.get(clientId)
+      if client is None:
+        return "Client doesn't exists.", 500
+      
+      seconds = self.mustWait(client)
+      if seconds != 0:
+        return Command.createWait(seconds).json()
+        
+      command = client.get()
+      if command is None: 
+        return 'Empty pending.', 404
+        
+      command.startTime = time.time()
+      self.commandDAO.save(command)
+      return command.json()
+      
+    @self.server.route('/client/<clientId>/command/<commandId>', methods=['POST'])
+    def postCommand(clientId, commandId):
+      client = self.clients.get(clientId)
+      if client is None:
+        return "Client doesn't exists.", 500
 
-app = Flask(__name__)
+      command = self.commands.get(commandId)
+      if command is None:
+        return "Command doesn't exists.", 500
+      
+      command.endTime = time.time()
+      self.commandDAO.save(command)
+      return json.dumps([])
+      
+  def addClient(self, client):
+    self.clients[client.uid] = client
+    for command in client.commands:
+      self.commands[command.uid] = command
+    
+  def run(self):
+    self.server.run(debug=True)
+    return []
 
-@app.route('/client/<client>/command', methods=['GET'])
-def get_command(client):
-  if len(pending[client]) == 0:
-    return 'Empty pending.', 404
+class App: 
+  def run(self):
+    clientCopy1 = Client('client-copy-1')
+    clientCopy1.add(Command.createWaitFile('file.dat'))
+    clientCopy1.add(Command.createCopyFile('file.dat', 'file-1.dat'))
+    
+    clientCopy2 = Client('client-copy-2')
+    clientCopy2.add(Command.createWaitFile('file.dat'))
+    clientCopy2.add(Command.createWaitFile('file-1.dat'))
+    clientCopy2.add(Command.createCopyFile('file-1.dat', 'file-2.dat'))
+    
+    clientDownload1 = Client('client-download-1')
+    clientDownload1.add(Command.createWaitFile('file.dat'))
+    clientDownload1.add(Command.createWaitFile('file-1.dat'))
+    clientDownload1.add(Command.createWaitFile('file-2.dat'))
+    
+    clientTester = ClientTester()
+    clientTester.addClient(clientCopy1)
+    clientTester.addClient(clientCopy2)
+    clientTester.addClient(clientDownload1)
+    clientTester.run()
 
-  command = pending[client].pop(0)
-  executed[command.get('uid')] = {
-    'ts-get': time.time() 
-  }
-  return json.dumps(command)
-
-@app.route('/client/<client>/command/<command>', methods=['POST'])
-def post_command(client, command):
-  executed[command]['time-post'] = time.time()
-  return json.dumps(executed[command])
-
-if __name__ == '__main__':
-  app.run(debug=True)
-  app.run()
+app = App()
+app.run()
