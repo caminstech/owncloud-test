@@ -62,6 +62,7 @@ class Server:
     for command in client.commands:
       self.commands[command.uid] = command
     
-  def run(self):
+  def run(self, database):
+    self.commandDAO = CommandDAO(database)
     self.server.run(debug=True)
     return []
