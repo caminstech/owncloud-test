@@ -45,22 +45,16 @@ class Command:
     return c
 
 class CommandDAO:
-  commands = {}
+  database = None
+
+  def __init__(self, database):
+    self.database = database
+
   def add(self, command):
-    self.commands.append(command)
-    print("-- ADD -----------------------------------------")
-    for c in self.commands:
-      print(c.json())
-    print("------------------------------------------------")
+    pass
+
   def update(self, command):
-    self.commands.append(command)
-    print("-- UPDATE --------------------------------------")
-    for c in self.commands:
-      print(c.json())
-    print("------------------------------------------------")
+    pass
+
   def save(self, command):
-    self.commands[command.uid] = command
-    print("-- SAVE ----------------------------------------")
-    for c in self.commands:
-      print(c.json())
-    print("------------------------------------------------")
+    pass
