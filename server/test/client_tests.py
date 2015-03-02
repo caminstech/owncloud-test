@@ -10,7 +10,7 @@ class ClientTest(unittest.TestCase):
     self.client = Client('client-id')
 
   def testGetNoCommand(self):
-    self.assertIsNone(self.client.getCommand())
+    self.assertIsNone(self.client.popCommand())
 
   def testGetAllCommands(self):
     command1 = mock()
@@ -18,6 +18,6 @@ class ClientTest(unittest.TestCase):
     self.client.addCommand(command1)
     self.client.addCommand(command2)
 
-    self.assertEquals(command1, self.client.getCommand())
-    self.assertEquals(command2, self.client.getCommand())
-    self.assertIsNone(self.client.getCommand())
+    self.assertEquals(command1, self.client.popCommand())
+    self.assertEquals(command2, self.client.popCommand())
+    self.assertIsNone(self.client.popCommand())

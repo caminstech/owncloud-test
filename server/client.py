@@ -1,15 +1,18 @@
 class Client:
-  uid = None
-  commands = None
+  _uid = None
+  _commands = None
   
   def __init__(self, uid):
-    self.uid = uid
-    self.commands = [] 
+    self._uid = uid
+    self._commands = [] 
       
+  def getUid(self):
+    return self._uid;
+
   def addCommand(self, command):
-    self.commands.append(command)
+    self._commands.append(command)
     
-  def getCommand(self):
-    if len(self.commands) == 0:
+  def popCommand(self):
+    if len(self._commands) == 0:
       return None
-    return self.commands.pop(0)
+    return self._commands.pop(0)
