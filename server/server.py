@@ -35,7 +35,7 @@ class Server:
       if seconds != 0:
         return Command.createWait(seconds).json()
         
-      command = client.get()
+      command = client.popCommand()
       if command is None: 
         return 'Empty pending.', 404
         
