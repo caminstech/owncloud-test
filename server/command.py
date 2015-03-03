@@ -1,5 +1,6 @@
 import json
 import uuid
+from collections import OrderedDict
 
 class Command:
   uid = None
@@ -8,18 +9,20 @@ class Command:
   startTime = None
   endTime = None
   client = None
-  
-  def json(self):
-    values = {
+    
+  def values(self):
+    return OrderedDict({
       'uid': self.uid,
-      'command': self.name,
+      'name': self.name,
       'parameters': self.parameters,
       'startTime': self.startTime,
       'endTime': self.endTime,
       'client': self.client.uid if self.client is not None else None
-    }
-    return json.dumps(values)
+    })
   
+  def json(self):
+    return json.dumps(self.values())
+
   @staticmethod
   def createWait(seconds):
     c = Command()
@@ -45,16 +48,19 @@ class Command:
     return c
 
 class CommandDAO:
-  database = None
+  _database = None
 
   def __init__(self, database):
-    self.database = database
-
-  def add(self, command):
-    pass
-
-  def update(self, command):
-    pass
+    self._database = database
+  
+  def create():
+    self._database.execute('create table commands (uid text, name text, parameters text, start_time integer, end_time integer, cliend_id text)')
 
   def save(self, command):
-    pass
+    found = self._database.find('commands', 'uid', { 'uid': command.uid })
+    values = command.values()
+    values['parameters'] = json.dumps(command.parameters)
+    if found is None:
+      self._database.insert('commands', values)
+    else :
+      self._database.update('commands', 'uid', values)

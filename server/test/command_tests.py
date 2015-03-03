@@ -9,7 +9,7 @@ class CommandTest(unittest.TestCase):
   def createCommandAsDict(self, client = None):
     return { 
       'uid': 'command-uid', 
-      'command': 'command-name', 
+      'name': 'command-name', 
       'parameters': { 'param1': 'param1-value', 'param2': 'param2-value'}, 
       'startTime': 1, 
       'endTime': 2, 
@@ -20,7 +20,7 @@ class CommandTest(unittest.TestCase):
     expected = self.createCommandAsDict()
     command = Command()
     command.uid = expected['uid']
-    command.name = expected['command']
+    command.name = expected['name']
     command.parameters = expected['parameters']
     command.startTime = expected['startTime']
     command.endTime = expected['endTime']
@@ -32,7 +32,7 @@ class CommandTest(unittest.TestCase):
     expected = self.createCommandAsDict(client)
     command = Command()
     command.uid = expected['uid']
-    command.name = expected['command']
+    command.name = expected['name']
     command.parameters = expected['parameters']
     command.startTime = expected['startTime']
     command.endTime = expected['endTime']
