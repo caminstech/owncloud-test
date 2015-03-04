@@ -4,7 +4,6 @@ from server import Server
   
 class ServerLoader:
   def loadTwoCopiesOneDownload(self, testname, database):
-    # TODO: Load tests dynamically
     clientCopy1 = Client('client-copy-1')
     clientCopy1.addCommand(Command.createWaitFile('file.dat'))
     clientCopy1.addCommand(Command.createCopyFile('file.dat', 'file-1.dat'))
@@ -26,4 +25,5 @@ class ServerLoader:
     return server
 
   def load(self, testname, database):
+    # TODO: Load tests dynamically
     return self.loadTwoCopiesOneDownload(testname, database)
