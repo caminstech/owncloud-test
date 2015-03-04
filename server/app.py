@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
+import argparse
+import logging
 
 from command import Command
 from database import DatabaseSQLite
 from client import Client
 from server import Server
+from serverLoader import ServerLoader
   
 class App:
-  def run(self, testname, database):
-	server = ServerLoader.load(testname)
-    server.run(DatabaseSQLite(args.database))
+  server = None
+  def __init__(self, testname, database):
+    self.server = ServerLoader().load(testname, database)
+    
+  def run(self):
+    self.server.run()
 
 def parseCommandLine():
   parser = argparse.ArgumentParser()
@@ -28,5 +34,5 @@ def configLogging(args):
 if __name__ == '__main__':
   args = parseCommandLine()
   configLogging(args)  
-  app = App()
-  app.run(args.testname, args.database)
+  app = App(args.testname, args.database)
+  app.run()
