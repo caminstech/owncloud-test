@@ -9,6 +9,9 @@ class Client:
   def getUid(self):
     return self._uid;
 
+  def getCommands(self):
+    return self._commands
+
   def addCommand(self, command):
     self._commands.append(command)
     
