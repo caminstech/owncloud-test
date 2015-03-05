@@ -9,13 +9,13 @@ from server import Server
 from serverLoader import ServerLoader
   
 class App:
-  def __init__(self, testname, database, newDatabase = False):
-    self.server = ServerLoader().load(testname)
-    
+  def __init__(self, testname, database, newDatabase = False):    
     commandDAO = CommandDAO(DatabaseSQLite(database))
     if newDatabase:
-      logging.debug("App.run() newDatabase")
+      logging.debug("App() - Creating CommandDAO tables.")
       commandDAO.create()
+
+    self.server = ServerLoader().load(testname)
     self.server.setCommandDAO(commandDAO)
   
   def run(self):
@@ -34,7 +34,7 @@ def configLogging(args):
   level = getattr(logging, args.loglevel.upper(), None)
   if not isinstance(level, int):
     raise ValueError('Invalid log level: %s' % args.loglevel)
-  format = '%(asctime)-15s %(levelname)s %(message)s'
+  format = '%(asctime)s - %(filename)s#%(lineno)s - %(message)s'
   logging.basicConfig(format=format, filename=args.logfile, level=level)
 
 if __name__ == '__main__':
