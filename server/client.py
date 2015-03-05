@@ -13,6 +13,7 @@ class Client:
     return self._commands
 
   def addCommand(self, command):
+    command.client = self
     self._commands.append(command)
     
   def popCommand(self):

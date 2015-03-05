@@ -25,7 +25,7 @@ class Server:
     command = Command()
     command.uid = json.get('uid')
     command.timeout = json.get('timeout')
-    command.runnable = self._factory.create(json.get('command'), json.get('parameters'))
+    command.runnable = self._factory.create(json.get('name'), json.get('parameters'))
     return command
 
   def __init__(self, baseUrl, clientId):

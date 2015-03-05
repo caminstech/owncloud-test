@@ -3,7 +3,7 @@ from client import Client
 from server import Server
   
 class ServerLoader:
-  def loadTwoCopiesOneDownload(self, testname, database):
+  def loadTwoCopiesOneDownload(self, testname):
     clientCopy1 = Client('client-copy-1')
     clientCopy1.addCommand(Command.createWaitFile('file.dat'))
     clientCopy1.addCommand(Command.createCopyFile('file.dat', 'file-1.dat'))
@@ -18,12 +18,12 @@ class ServerLoader:
     clientDownload1.addCommand(Command.createWaitFile('file-1.dat'))
     clientDownload1.addCommand(Command.createWaitFile('file-2.dat'))
     
-    server = Server(database)
+    server = Server()
     server.addClient(clientCopy1)
     server.addClient(clientCopy2)
     server.addClient(clientDownload1)
     return server
 
-  def load(self, testname, database):
+  def load(self, testname):
     # TODO: Load tests dynamically
-    return self.loadTwoCopiesOneDownload(testname, database)
+    return self.loadTwoCopiesOneDownload(testname)

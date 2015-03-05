@@ -1,68 +1,108 @@
 import json
 import time
 
-from flask import Flask
+import logging
+
+from flask import Flask, request
 
 from command import Command, CommandDAO
+from exception import ClientNotFoundException, CommandNotFoundException, EmptyCommandsException, WaitingClientsException
 
 class Server:
-  server = None
   clients = None
   clientsWaiting = None
   commands = None
-  commandDAO = None
+  _commandDAO = None
+  _server = None
+
+  def clientMustWait(self, client):
+    self.clientsWaiting[client.getUid()] = client    
+    return len(self.clients) > len(self.clientsWaiting)
+
+  def createWaitCommand(self):
+    seconds = len(self.clients) - len(self.clientsWaiting)
+    return Command.createWait(seconds)
+
+  def popCommand(self, clientId):
+    client = self.clients.get(clientId)
+    if client is None:
+      raise ClientNotFoundException()      
+    if self.clientMustWait(client):
+      raise WaitingClientsException()
+    command = client.popCommand()
+    if command is None: 
+      raise EmptyCommandsException()
+    return command
   
-  def mustWait(self, client):
-    self.clientsWaiting[client.uid] = client    
-    if len(self.clients) == len(self.clientsWaiting):
-      return 0      
-    return 1
-  
+  def getCommand(self, clientId, commandId):
+    client = self.clients.get(clientId)
+    if client is None:
+      raise ClientNotFoundException()      
+    command = self.commands.get(commandId)
+    if command is None:
+      raise CommandNotFoundException()      
+    if command.client.getUid() != clientId:
+      raise CommandNotFoundException()      
+
+    return command
+
+  def shutdown(self):
+    logging.info("Server.shutdown(): Shutdown server")
+    function = request.environ.get('werkzeug.server.shutdown')
+    if function is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    function()
+
   def __init__(self):
     self.clients = {}
     self.clientsWaiting = {}
     self.commands = {}
-    self.commandDAO = CommandDAO()    
-    self.server = Flask(__name__)
-    
-    @self.server.route('/client/<clientId>/command', methods=['GET'])
-    def getCommand(clientId):
-      client = self.clients.get(clientId)
-      if client is None:
-        return "Client doesn't exists.", 500
-      
-      seconds = self.mustWait(client)
-      if seconds != 0:
-        return Command.createWait(seconds).json()
-        
-      command = client.popCommand()
-      if command is None: 
-        return 'Empty pending.', 404
-        
-      command.startTime = time.time()
-      self.commandDAO.save(command)
-      return command.json()
-      
-    @self.server.route('/client/<clientId>/command/<commandId>', methods=['POST'])
-    def postCommand(clientId, commandId):
-      client = self.clients.get(clientId)
-      if client is None:
-        return "Client doesn't exists.", 500
+    self._commandDAO = None
+    self._server = Flask(__name__)
 
-      command = self.commands.get(commandId)
-      if command is None:
-        return "Command doesn't exists.", 500
-      
-      command.endTime = time.time()
-      self.commandDAO.save(command)
-      return json.dumps([])
-      
+  def setCommandDAO(self, commandDAO):
+    self._commandDAO = commandDAO        
+       
   def addClient(self, client):
-    self.clients[client.uid] = client
-    for command in client.commands:
+    self.clients[client.getUid()] = client
+    for command in client.getCommands():
       self.commands[command.uid] = command
     
-  def run(self, database):
-    self.commandDAO = CommandDAO(database)
-    self.server.run(debug=True)
+  def run(self):
+    @self._server.route('/client/<clientId>/command', methods=['GET'])
+    def getCommand(clientId):
+      try:
+        command = self.popCommand(clientId)
+        command.startTime = time.time()
+        self._commandDAO.save(command)
+        return command.json()
+      except ClientNotFoundException as e:
+        msg = "Client doesn't exist. (clientId=%s)" % clientId
+        logging.warning(msg)
+        return msg, 500
+      except EmptyCommandsException as e:
+        self.clients.pop(clientId)
+        if len(self.clients) == 0:
+          self.shutdown()
+        msg = "Empty commands queue. (clientId=%s)" % clientId
+        logging.info(msg)
+        return msg, 404
+      except WaitingClientsException as e:
+        msg = "Client must wait. (clientId=%s)" % clientId
+        logging.info(msg)
+        return self.createWaitCommand().json()
+
+    @self._server.route('/client/<clientId>/command/<commandId>', methods=['POST'])
+    def postCommand(clientId, commandId):
+      try:
+        command = self.getCommand(clientId, commandId)
+        command.endTime = time.time()
+        self._commandDAO.save(command)
+        return command.json()
+      except ClientNotFoundException as e:
+        return "Client '%s' doesn't exist." % clientId, 500
+      except CommandNotFoundException as e:
+        return "Command'%s' doesn't exist." % commandId, 500
+     
+    self._server.run(debug=True, use_reloader=False)
     return []
