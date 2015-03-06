@@ -1,4 +1,4 @@
-class ClientNotFoundException(Exception):
+class NotFoundException(Exception):
   pass
 
 class CommandNotFoundException(Exception):

@@ -3,10 +3,10 @@ import argparse
 import logging
 
 from database import DatabaseSQLite
-from command import Command, CommandDAO
-from client import Client
+from command import Command
+from commandDAO import CommandDAO
 from server import Server
-from serverLoader import ServerLoader
+from testLoader import TestLoader
   
 class App:
   def __init__(self, testname, database, newDatabase = False):    
@@ -15,10 +15,14 @@ class App:
       logging.debug("App() - Creating CommandDAO tables.")
       commandDAO.create()
 
-    self.server = ServerLoader().load(testname)
+    testLoader = TestLoader()
+    testLoader.setCommandDAO(commandDAO)
+    testLoader.load(testname)
+
+    self.server = Server()
     self.server.setCommandDAO(commandDAO)
   
-  def run(self):
+  def run(self):    
     self.server.run()
 
 def parseCommandLine():

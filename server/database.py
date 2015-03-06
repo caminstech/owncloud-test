@@ -1,9 +1,8 @@
 import sqlite3
 import logging
 
-class NotFoundException(Exception):
-  pass
-
+from exception import NotFoundException
+  
 class DatabaseSQLite:
   _db = None
 
@@ -19,14 +18,36 @@ class DatabaseSQLite:
     cursor.close()
     self._db.commit()
     
-  def find(self, table, key, values):
-    sql = 'select * from %s where %s=:%s' % (table, key, key)
+  def findByPk(self, table, pk, value):
+    sql = 'select * from %s where %s=:%s' % (table, pk, pk)
+    cursor = self._db.cursor()
+    cursor.execute(sql, {pk: value})
+    result = cursor.fetchone()
+    cursor.close()
+    return result
+
+  def findByCondition(self, table, condition = None, values = {}, orderBy = None):
+    sql = 'select * from %s' % (table,)
+    if condition is not None:
+      sql = sql + ' where %s' % (condition,)
+    if orderBy is not None:
+      sql = sql + ' order by %s' % (orderBy,)
+
     cursor = self._db.cursor()
     cursor.execute(sql, values)
     result = cursor.fetchone()
     cursor.close()
-    self._db.commit()
     return result
+
+  def countByCondition(self, table, condition = None, values = {}):
+    sql = 'select count(*) from %s' % (table,)
+    if condition is not None:
+      sql = sql + ' where %s' % (condition,)
+    cursor = self._db.cursor()
+    cursor.execute(sql, values)
+    result = cursor.fetchone()
+    cursor.close()
+    return result[0]
 
   def insert(self, table, values):  
     names = [k for k in values.keys()]
