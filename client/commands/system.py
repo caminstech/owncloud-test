@@ -4,12 +4,18 @@ import time
 
 from exception import CommandExecutionException
 
-class Copy:
+class CopyFile:
   src = None
   dst = None 	
   def set(self, parameters):
     self.src = parameters.get('src')
     self.dst = parameters.get('dst')
+
+    if self.src is None:
+      raise CommandParameterNotFoundException('src')
+
+    if self.dst is None:
+      raise CommandParameterNotFoundException('dst')
 
   def run(self):
     try:
@@ -37,6 +43,9 @@ class WaitUntilFileSize:
     self.path = parameters.get('path')
     self.size = parameters.get('size')
 
+    if self.path is None:
+      raise CommandParameterNotFoundException('path')
+
   def run(self):
     while(not self.found()):
       time.sleep(self.wait)
@@ -45,13 +54,16 @@ class WaitUntilFileSize:
     return "WaitUntilFileSize(path=%s,size=%s)" % (self.path, self.size)
 
 class Wait:
-  wait = None
+  seconds = None
 
   def set(self, parameters):
-    self.wait = parameters.get('wait')
+    self.seconds = parameters.get('seconds')
+
+    if self.seconds is None:
+      raise CommandParameterNotFoundException('seconds')
 
   def run(self):
-    time.sleep(self.wait)
+    time.sleep(self.seconds)
 
   def __str__(self):
-    return "Wait(wait=%s)" % (self.wait)
+    return "Wait(seconds=%s)" % (self.seconds)

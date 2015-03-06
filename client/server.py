@@ -14,14 +14,18 @@ class Server:
   _factory = None
   _requests = None
 
-  def _getClientUrl(self):
-    return urljoin(self.baseUrl + '/client/', self.clientId)
+  def _getClientCommandUrl(self):
+    url = self.baseUrl
+    url = urljoin(url, 'client')
+    url = urljoin(url + "/", self.clientId)
+    url = urljoin(url + "/", 'command')
+    return url
 
   def _createCommand(self, json):
     command = Command()
-    command.uid = json['uid']
-    command.timeout = json['timeout'] if 'timeout' in json else None
-    command.runnable = self._factory.create(json['command'], json['parameters'] if 'parameters' in json else {})
+    command.uid = json.get('uid')
+    command.timeout = json.get('timeout')
+    command.runnable = self._factory.create(json.get('name'), json.get('parameters'))
     return command
 
   def __init__(self, baseUrl, clientId):
@@ -31,14 +35,18 @@ class Server:
     self._requests = requests
 
   def get(self):
-    url = self._getClientUrl()
+    url = self._getClientCommandUrl()
     response = self._requests.get(url)
+    
+    if response.status_code == requests.codes.not_found: 
+      return None
+    
     if response.status_code != requests.codes.ok: 
       raise HttpException(response.status_code)
 
     return self._createCommand(response.json())
     
   def send(self, response):
-    url = self._getClientUrl()
+    url = self._getClientCommandUrl()
     url = urljoin(url + "/", response.uid)
     self._requests.post(url, response.json())
