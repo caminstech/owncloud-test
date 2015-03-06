@@ -2,6 +2,7 @@
 import argparse
 import logging
 
+from exception import NotFoundException, ValueErrorException
 from database import DatabaseSQLite
 from command import Command
 from commandDAO import CommandDAO
@@ -9,21 +10,26 @@ from server import Server
 from testLoader import TestLoader
   
 class App:
-  def __init__(self, testname, database, newDatabase = False):    
+  def __init__(self, database, newDatabase = False):    
     commandDAO = CommandDAO(DatabaseSQLite(database))
     if newDatabase:
       logging.debug("App() - Creating CommandDAO tables.")
       commandDAO.create()
 
-    testLoader = TestLoader()
-    testLoader.setCommandDAO(commandDAO)
-    testLoader.load(testname)
+    self.testLoader = TestLoader()
+    self.testLoader.setCommandDAO(commandDAO)
 
     self.server = Server()
     self.server.setCommandDAO(commandDAO)
   
-  def run(self):    
-    self.server.run()
+  def run(self, testname):    
+    try:
+      self.testLoader.load(testname)
+      self.server.run()
+    except NotFoundException as e:
+      print('ERROR: ' + str(e))
+    except ValueErrorException as e:
+      print('ERROR: ' + str(e))
 
 def parseCommandLine():
   parser = argparse.ArgumentParser()
@@ -44,5 +50,5 @@ def configLogging(args):
 if __name__ == '__main__':
   args = parseCommandLine()
   configLogging(args)  
-  app = App(args.testname, args.database, args.new_database)
-  app.run()
+  app = App(args.database, args.new_database)
+  app.run(args.testname)
