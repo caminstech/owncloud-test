@@ -13,7 +13,7 @@ class ServerTest(unittest.TestCase):
   def mockResponse(self, uid, command, parameters = {}, timeout = None): 
     response = mock()
     response.status_code = 200
-    json = { 'uid': uid, 'command': command, 'parameters': parameters }
+    json = { 'uid': uid, 'name': command, 'parameters': parameters }
     if timeout is not None:
       json['timeout'] = timeout
     when(response).json().thenReturn(json)

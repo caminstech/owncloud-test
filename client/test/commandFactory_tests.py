@@ -11,7 +11,7 @@ class CommandFactoryTest(unittest.TestCase):
     self.factory = CommandFactory()
 
   def testCreateWait(self):    
-    self.assertIsInstance(self.factory.create(CommandFactory.ID_WAIT, {'wait': 1}), Wait)
+    self.assertIsInstance(self.factory.create(CommandFactory.ID_WAIT, {'seconds': 1}), Wait)
 
   def testCreateCopyFile(self):    
     self.assertIsInstance(self.factory.create(CommandFactory.ID_COPY_FILE, {'src': 'path1', 'dst': 'path2'}), CopyFile)
