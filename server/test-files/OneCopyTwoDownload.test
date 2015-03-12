@@ -3,7 +3,7 @@
     "copy": [
       { "name": "wait-file", "parameters": { "path": "file-src.dat" } },
       { "name": "copy-file", "parameters": { "src": "file-src.dat", "dst": "file-dst.dat" } }
-    ],  
+    ],
     "download" : [
       { "name": "wait-file", "parameters": { "path": "file-dst.dat" } }
     ]
