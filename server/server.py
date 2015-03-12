@@ -70,5 +70,5 @@ class Server:
       except NotFoundException as e:
         return "Command'%s' doesn't exist." % commandId, 500
      
-    self._server.run(debug=True, use_reloader=False)
+    self._server.run(debug=True, use_reloader=False, host='0.0.0.0')
     return []
