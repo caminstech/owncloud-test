@@ -31,8 +31,7 @@ class SystemTest(unittest.TestCase):
     srcFilename = self._getTempFile('src')
     dstFilename = self._getTempFile('dst')
     self._createFile(srcFilename, srcContent)
-
-    copy = Copy()
+    copy = CopyFile()
     copy.set({ 'src': srcFilename, 'dst': dstFilename })
     copy.run()
 
@@ -43,7 +42,7 @@ class SystemTest(unittest.TestCase):
     srcFilename = self._getTempFile('src')
     dstFilename = self._getTempFile('dst')
 
-    copy = Copy()
+    copy = CopyFile()
     copy.set({ 'src': srcFilename, 'dst': dstFilename })
     self.assertRaises(CommandExecutionException, copy.run)
 
@@ -51,7 +50,7 @@ class SystemTest(unittest.TestCase):
     filename = self._getTempFile('src-dst')
     self._createFile(filename)
 
-    copy = Copy()
+    copy = CopyFile()
     copy.set({ 'src': filename, 'dst': filename })
     self.assertRaises(CommandExecutionException, copy.run)  
 
@@ -62,3 +61,12 @@ class SystemTest(unittest.TestCase):
     wait = WaitUntilFileSize()
     wait.set({ 'path': filename, 'size': 7 })
     wait.run()
+
+  def testCreateFile(self):
+    filename = self._getTempFile('file')
+    size = 1000
+    create = CreateFile()
+    create.set({ 'path': filename, 'size': size })
+    create.run()
+    self.assertTrue(os.path.isfile(filename), "File doesn't exists")
+    self.assertEquals(size, os.path.getsize(filename), "File size are not equal")

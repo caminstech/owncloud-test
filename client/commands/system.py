@@ -24,8 +24,34 @@ class CopyFile:
       raise CommandExecutionException(e)
 
   def __str__(self):
-    return "Copy(src=%s,dst=%s)" % (self.src, self.dst)
+    return "CopyFile(src=%s,dst=%s)" % (self.src, self.dst)
 
+class CreateFile:
+  path = None
+  size = None 	
+  def set(self, parameters):
+    self.path = parameters.get('path')
+    self.size = parameters.get('size')
+    try:
+      self.size = int(self.size)
+    except ValueError:
+      self.size = 0
+
+    if self.path is None:
+      raise CommandParameterNotFoundException('path')
+
+  def run(self):
+    b = bytearray.fromhex('00')
+    try:
+      f = open(self.path, 'wb')
+      f.seek(self.size-1)
+      f.write(b)
+      f.close()
+    except IOError as e:
+      raise CommandExecutionException(e)
+
+  def __str__(self):
+    return "CreateFile(path=%s,size=%s)" % (self.path, self.size)
 
 class WaitUntilFileSize:
   path = None
