@@ -7,4 +7,4 @@
     $ cd owncloud-test
     $ source bin/activate
     $ easy_install -U setuptools
-    $ easy_install nose mockito requests urllib3 flask
+    $ easy_install nose mockito requests urllib3 flask humanfriendly

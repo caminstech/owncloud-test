@@ -70,3 +70,21 @@ class SystemTest(unittest.TestCase):
     create.run()
     self.assertTrue(os.path.isfile(filename), "File doesn't exists")
     self.assertEquals(size, os.path.getsize(filename), "File size are not equal")
+
+  def testCreateFileSizeInMb(self):
+    filename = self._getTempFile('file')
+    size = '2'
+    create = CreateFile()
+    create.set({ 'path': filename, 'size': size + 'Mb' })
+    create.run()
+    self.assertTrue(os.path.isfile(filename), "File doesn't exists")
+    self.assertEquals(2*1024*1024, os.path.getsize(filename), "File size are not equal")
+
+  def testCreateFileInFolder(self):
+    filename = self._getTempFile('folder/file')
+    size = 10
+    create = CreateFile()
+    create.set({ 'path': filename, 'size': size })
+    create.run()
+    self.assertTrue(os.path.isfile(filename), "File doesn't exists")
+    self.assertEquals(size, os.path.getsize(filename), "File size are not equal")

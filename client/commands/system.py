@@ -1,6 +1,7 @@
 import shutil
 import os.path
 import time
+import humanfriendly
 
 from exception import CommandExecutionException
 
@@ -29,13 +30,15 @@ class CopyFile:
 class CreateFile:
   path = None
   size = None 	
+  
+  def _sizeInBytes(self, value):
+    if value is None:
+      return 0
+    return humanfriendly.parse_size(str(value))
+
   def set(self, parameters):
     self.path = parameters.get('path')
-    self.size = parameters.get('size')
-    try:
-      self.size = int(self.size)
-    except ValueError:
-      self.size = 0
+    self.size = self._sizeInBytes(parameters.get('size'))
 
     if self.path is None:
       raise CommandParameterNotFoundException('path')
@@ -43,6 +46,9 @@ class CreateFile:
   def run(self):
     b = bytearray.fromhex('00')
     try:
+      dirname = os.path.dirname(self.path)
+      if dirname and not os.path.isdir(dirname):
+        os.makedirs(dirname)
       f = open(self.path, 'wb')
       f.seek(self.size-1)
       f.write(b)
