@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "copy": [
+      { "name": "create-file", "parameters": { "path": "local/empty", "size": "0" } },
+      { "name": "copy-file", "parameters": { "src": "local/empty", "dst": "owncloud/empty" } }
+    ],  
+    "download" : [
+      { "name": "wait-file", "parameters": { "path": "owncloud/empty" } }
+    ]
+  },
+  "clients": {
+    "client-copy": "copy",
+    "client-download": "download"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "copy": [
+      { "name": "create-file", "parameters": { "path": "local/large-2Gb", "size": "2Gb" } },
+      { "name": "copy-file", "parameters": { "src": "local/large-2Gb", "dst": "owncloud/large-2Gb" } }
+    ],  
+    "download" : [
+      { "name": "wait-file", "parameters": { "path": "owncloud/large-2Gb" } }
+    ]
+  },
+  "clients": {
+    "client-copy": "copy",
+    "client-download": "download"
+  }
+}
