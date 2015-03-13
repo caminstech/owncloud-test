@@ -16,6 +16,9 @@ class CommandFactoryTest(unittest.TestCase):
   def testCreateCopyFile(self):    
     self.assertIsInstance(self.factory.create(CommandFactory.ID_COPY_FILE, {'src': 'path1', 'dst': 'path2'}), CopyFile)
 
+  def testCreateMoveFile(self):    
+    self.assertIsInstance(self.factory.create(CommandFactory.ID_MOVE_FILE, {'src': 'path1', 'dst': 'path2'}), MoveFile)
+
   def testCreateCreateFile(self):    
     self.assertIsInstance(self.factory.create(CommandFactory.ID_CREATE_FILE, {'path': 'path1', 'size': '1'}), CreateFile)
 

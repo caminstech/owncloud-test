@@ -5,12 +5,14 @@ class CommandFactory:
   ID_WAIT = 'wait'
   ID_CREATE_FILE = 'create-file'
   ID_COPY_FILE = 'copy-file'
+  ID_MOVE_FILE = 'move-file'
   ID_WAIT_FILE = 'wait-file'
 
   def __init__(self):
     self.commands = { 
       self.ID_WAIT: system.Wait(),
       self.ID_COPY_FILE: system.CopyFile(),
+      self.ID_MOVE_FILE: system.MoveFile(),
       self.ID_CREATE_FILE: system.CreateFile(),
       self.ID_WAIT_FILE: system.WaitUntilFileSize(),
     }

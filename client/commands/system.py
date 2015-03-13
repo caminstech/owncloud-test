@@ -27,6 +27,30 @@ class CopyFile:
   def __str__(self):
     return "CopyFile(src=%s,dst=%s)" % (self.src, self.dst)
 
+class MoveFile:
+  src = None
+  dst = None 	
+  def set(self, parameters):
+    self.src = parameters.get('src')
+    self.dst = parameters.get('dst')
+
+    if self.src is None:
+      raise CommandParameterNotFoundException('src')
+    if self.dst is None:
+      raise CommandParameterNotFoundException('dst')
+
+  def run(self):
+    if self.src == self.dst: 
+      raise CommandExecutionException('src == dst')
+
+    try:
+      shutil.move(self.src, self.dst)
+    except IOError as e:
+      raise CommandExecutionException(e)
+
+  def __str__(self):
+    return "MoveFile(src=%s,dst=%s)" % (self.src, self.dst)
+
 class CreateFile:
   path = None
   size = None 	

@@ -88,3 +88,32 @@ class SystemTest(unittest.TestCase):
     create.run()
     self.assertTrue(os.path.isfile(filename), "File doesn't exists")
     self.assertEquals(size, os.path.getsize(filename), "File size are not equal")
+
+  def testMove(self):
+    srcContent = 'uhu80y342ubfvnbopufh34y03nvlkfhe0o3';
+    srcFilename = self._getTempFile('src')
+    dstFilename = self._getTempFile('dst')
+    self._createFile(srcFilename, srcContent)
+    move = MoveFile()
+    move.set({ 'src': srcFilename, 'dst': dstFilename })
+    move.run()
+
+    self.assertTrue(os.path.isfile(dstFilename), "Destination file doesn't exists")
+    self.assertFalse(os.path.isfile(srcFilename), "Source file exists")
+    self.assertEquals(srcContent, self._readFile(dstFilename), "File content isn't equal")
+
+  def testMoveNotExists(self):
+    srcFilename = self._getTempFile('src')
+    dstFilename = self._getTempFile('dst')
+
+    move = MoveFile()
+    move.set({ 'src': srcFilename, 'dst': dstFilename })
+    self.assertRaises(CommandExecutionException, move.run)
+
+  def testMoveSameFile(self):
+    filename = self._getTempFile('src-dst')
+    self._createFile(filename)
+
+    move = MoveFile()
+    move.set({ 'src': filename, 'dst': filename })
+    self.assertRaises(CommandExecutionException, move.run)

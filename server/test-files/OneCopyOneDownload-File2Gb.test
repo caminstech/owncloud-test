@@ -2,7 +2,7 @@
   "profiles": {
     "copy": [
       { "name": "create-file", "parameters": { "path": "local/large-2Gb", "size": "2Gb" } },
-      { "name": "copy-file", "parameters": { "src": "local/large-2Gb", "dst": "owncloud/large-2Gb" } }
+      { "name": "move-file", "parameters": { "src": "local/large-2Gb", "dst": "owncloud/large-2Gb" } }
     ],  
     "download" : [
       { "name": "wait-file", "parameters": { "path": "owncloud/large-2Gb" } }
@@ -13,3 +13,9 @@
     "client-download": "download"
   }
 }
+
+#=#=#=# Syncrun started 2015-03-13T09:11:49 until 2015-03-13T09:19:24 (454752 msec)
+|0|large-2Gb|INST_NEW|Up|1426234307||2147483648||2|Error downloading https://drive-pre.caminstech.upc.edu/remote.php/webdav/large-2Gb-chunking-473056259-103-102 - server replied: Gateway Time-out|0|0|0|||INST_NONE|
+#=#=#=# Syncrun started 2015-03-13T09:20:09 until 2015-03-13T09:20:11 (2192 msec)
+
+
